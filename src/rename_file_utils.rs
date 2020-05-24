@@ -1,13 +1,10 @@
 extern crate fs_extra;
 
-use std::borrow::Borrow;
 use std::collections::HashMap;
-use std::ffi::OsStr;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use copy_dir;
-use fs_extra::dir::{copy, CopyOptions};
 use regex::Regex;
 use walkdir::WalkDir;
 
@@ -24,7 +21,6 @@ pub fn prep_cleanup_file_names(template_dir: &str, output_dir: &str) {
         fs::remove_dir_all(output_dir);
     }
     println!("copying dir {} to {}", template_dir, output_dir);
-    let options = CopyOptions::new();
     copy_dir::copy_dir(template_dir, output_dir);
 }
 
@@ -43,7 +39,7 @@ impl Report {
         if !self.frequency.contains_key(&ch) {
             self.frequency.insert(ch, 1);
         } else {
-            let mut val = self.frequency.get(&ch);
+            let val = self.frequency.get(&ch);
             let val = val.unwrap() + 1 as i32;
             self.frequency.insert(ch, val);
         }
@@ -57,7 +53,11 @@ impl Report {
 }
 
 pub fn check_frequency(target_dir: &str) {
-    println!("Checking this directory {} please wait", target_dir);
+    if !Path::new(target_dir).exists() {
+        println!("Path doesn't exist: {}", target_dir);
+    }
+
+    println!("Checking this directory {}, please wait", target_dir);
 
     let mut report = Report::new();
     let invalid_chars = vec!['/', '\\', '<', '>', ':', '*', '\"', '?', '|'];
@@ -81,7 +81,12 @@ pub fn check_frequency(target_dir: &str) {
     report.print_report()
 }
 
-pub fn cleanup_file_names(target_dir: &str) -> Result<(), Box<dyn std::error::Error>> {
+pub fn cleanup_file_names(target_dir: &str) {
+    if !Path::new(target_dir).exists() {
+        println!("Path doesn't exist: {}", target_dir);
+    }
+
+    // OneDrive doesn't like these filenames
     /*
       / \ < > : * " ? |
     */
@@ -107,6 +112,4 @@ pub fn cleanup_file_names(target_dir: &str) -> Result<(), Box<dyn std::error::Er
         println!("Renaming {} to {}", &old_filename, &new_filename);
         fs::rename(&old_filename, &new_filename);
     }
-
-    Ok(())
 }

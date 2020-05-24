@@ -1,7 +1,7 @@
 [package]
 name = "rust"
 version = "0.1.0"
-edition = "2020"
+edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -10,3 +10,5 @@ walkdir = "2"
 fs_extra = "1.1.0"
 copy_dir = "0.1.2"
 regex = "1.1.0"
+getopts = "0.*"
+clap = "3.0.0-beta.1"
