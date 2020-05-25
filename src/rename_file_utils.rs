@@ -74,6 +74,7 @@ pub fn cleanup_file_names(target_dir: &str) {
     }
 
     let re = Regex::new(r#"[:\\"?<>\\\*\|]"#).unwrap();
+    let re_space = Regex::new(r"[^\s+]|[\s+$]").unwrap();
 
     for entry in WalkDir::new(target_dir) {
         let ent = entry.unwrap();
@@ -85,10 +86,11 @@ pub fn cleanup_file_names(target_dir: &str) {
         let dirname = &path[0..pos.unwrap()];
         let filename = &path[pos.unwrap()+1..];
 
-        if !re.is_match(filename) {
+        if !re.is_match(filename) && !re_space.is_match(filename) {
             continue
         }
         let new_filename = re.replace_all(filename, "-");
+        let new_filename = new_filename.trim();
         let old_filename = [dirname, "/", &filename].concat();
         let new_filename = [dirname, "/", &new_filename].concat();
 
