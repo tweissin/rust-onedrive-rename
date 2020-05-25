@@ -1,4 +1,5 @@
 use std::process;
+use std::io;
 
 use clap::{App, Arg};
 
@@ -31,7 +32,13 @@ fn main() {
     });
 
     if matches.is_present("test") {
-        rename_file_utils::prep_cleanup_file_names("testdir.templ", dir);
+        let do_it = check_yes("This will delete files, type yes to continue!");
+        if do_it {
+            rename_file_utils::prep_cleanup_file_names("testdir.templ", dir);
+        } else {
+            println!("Aborted");
+            return;
+        }
     }
     
     if matches.is_present("check") {
@@ -42,4 +49,11 @@ fn main() {
     rename_file_utils::check_frequency(dir);
     rename_file_utils::cleanup_file_names(dir);
     rename_file_utils::check_frequency(dir);
+}
+
+fn check_yes(message: &str) -> bool {
+    println!("{}", message);
+    let mut response = String::new();
+    io::stdin().read_line(&mut response).expect("Failed to read line");
+    return response.trim().to_lowercase() == "yes";
 }
