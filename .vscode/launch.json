@@ -10,35 +10,16 @@
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=rust",
-                    "--package=rust"
+                    "--bin=renamer",
+                    "--package=renamer"
                 ],
                 "filter": {
-                    "name": "rust",
+                    "name": "renamer",
                     "kind": "bin"
                 }
             },
-            "args": [],
+            "args": ["-d", "testdir", "-t"],
             "cwd": "${workspaceFolder}"
         },
-        {
-            "type": "lldb",
-            "request": "launch",
-            "name": "Debug unit tests in executable 'rust'",
-            "cargo": {
-                "args": [
-                    "test",
-                    "--no-run",
-                    "--bin=rust",
-                    "--package=rust"
-                ],
-                "filter": {
-                    "name": "rust",
-                    "kind": "bin"
-                }
-            },
-            "args": [],
-            "cwd": "${workspaceFolder}"
-        }
     ]
 }

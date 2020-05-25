@@ -8,22 +8,6 @@ use copy_dir;
 use regex::Regex;
 use walkdir::WalkDir;
 
-// template_dir should have this structure:
-// + testdir.templ
-//   - 1st_:\<>-*"?.rtf
-//   + subdir
-//     - 2nd_:\<>-*"?.rtf
-//     + subsubdir
-//       - 3rd_:\<>-*"?.rtf
-pub fn prep_cleanup_file_names(template_dir: &str, output_dir: &str) {
-    if Path::new(output_dir).exists() {
-        println!("removing dir {}", output_dir);
-        fs::remove_dir_all(output_dir);
-    }
-    println!("copying dir {} to {}", template_dir, output_dir);
-    copy_dir::copy_dir(template_dir, output_dir);
-}
-
 struct Report {
     frequency: HashMap<char, i32>
 }
@@ -81,15 +65,14 @@ pub fn check_frequency(target_dir: &str) {
     report.print_report()
 }
 
+// This cleans up filenames by replacing unsupported characters with "-"
+// OneDrive doesn't like these characters in filenames:
+//  / \ < > : * " ? |
 pub fn cleanup_file_names(target_dir: &str) {
     if !Path::new(target_dir).exists() {
         println!("Path doesn't exist: {}", target_dir);
     }
 
-    // OneDrive doesn't like these filenames
-    /*
-      / \ < > : * " ? |
-    */
     let re = Regex::new(r#"[:\\"?<>\\\*\|]"#).unwrap();
 
     for entry in WalkDir::new(target_dir) {
@@ -110,6 +93,35 @@ pub fn cleanup_file_names(target_dir: &str) {
         let new_filename = [dirname, "/", &new_filename].concat();
 
         println!("Renaming {} to {}", &old_filename, &new_filename);
-        fs::rename(&old_filename, &new_filename);
+        let res = fs::rename(&old_filename, &new_filename);
+        match res {
+            Ok(file) => file,
+            Err(error) => println!("Problem renaming file: {:?}", error),
+        };
     }
 }
+
+// template_dir should have this structure:
+// + testdir.templ
+//   - 1st_:\<>-*"?.rtf
+//   + subdir
+//     - 2nd_:\<>-*"?.rtf
+//     + subsubdir
+//       - 3rd_:\<>-*"?.rtf
+pub fn prep_cleanup_file_names(template_dir: &str, output_dir: &str) {
+    if Path::new(output_dir).exists() {
+        println!("removing dir {}", output_dir);
+        let res = fs::remove_dir_all(output_dir);
+        match res {
+            Ok(file) => file,
+            Err(error) => panic!("Problem renaming file: {:?}", error),
+        };
+    }
+    println!("copying dir {} to {}", template_dir, output_dir);
+    let res = copy_dir::copy_dir(template_dir, output_dir);
+    match res {
+        Ok(file) => file,
+        Err(error) => panic!("Problem copying directory: {:?}", error)
+    };
+}
+
