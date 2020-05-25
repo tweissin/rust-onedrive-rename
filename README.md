@@ -30,6 +30,10 @@ With compiled application artifact:
 
 `./target/release/renamer -d <dirname>`
 
+To run a check and generate a report without changing anyting (dry-run):
+
+`cargo run -- -c -d <dirname>`
+
 ## Debugging
 
 With VSCode, install the Rust and the CodeLLDB extensions.

@@ -18,7 +18,7 @@
                     "kind": "bin"
                 }
             },
-            "args": ["-d", "testdir", "-t"],
+            "args": ["-d", "testdir", "-t", "-c"],
             "cwd": "${workspaceFolder}"
         },
     ]
