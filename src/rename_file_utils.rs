@@ -73,7 +73,7 @@ pub fn check_frequency(target_dir: &str) {
         let ent = entry.unwrap();
         let path = ent.path().display().to_string();
         let pos = path.rfind('/');
-        if pos == None || ent.path().is_dir() {
+        if pos == None {
             continue
         }
         let filename = &path[pos.unwrap()+1..];
