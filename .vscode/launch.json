@@ -18,8 +18,13 @@
                     "kind": "bin"
                 }
             },
-            "args": ["-d", "testdir", "-t", "-c"],
-            "cwd": "${workspaceFolder}"
+            "args": ["-d", "testdir", "-t", "-a"],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "TENANT": "TENANT",
+                "CLIENT_ID": "CLIENT_ID",
+                "CLIENT_SECRET": "CLIENT_SECRET",
+            }
         },
     ]
 }

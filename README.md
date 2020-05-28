@@ -65,3 +65,8 @@ cargo run -- -t -d testdir
     + subsubdir
       - third_--------.rtf
 ```
+
+Three environments may be specified in `launch.json` to generate an access token with the `-a` parameter:
+* TENANT
+* CLIENT_ID
+* CLIENT_SECRET
